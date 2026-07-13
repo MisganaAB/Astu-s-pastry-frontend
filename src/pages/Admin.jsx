@@ -17,7 +17,12 @@ export default function Admin() {
   const { refreshMenu, applyItemUpsert, rollbackMenu } = useMenu();
 
   const handleChange = (field) => (event) => {
-    setForm((prev) => ({ ...prev, [field]: event.target.value }));
+    let value = event.target.value;
+    // allow mobile locales that use comma as decimal separator
+    if (field === "price" && typeof value === "string") {
+      value = value.replace(/,/g, ".");
+    }
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const openAddForm = () => {
