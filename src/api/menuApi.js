@@ -1,20 +1,16 @@
-import localMenu from "../../../backend/data/menu_with_images.json";
 import { MENU_API_URL, MENU_ITEMS_API_URL } from "../config/api";
 
 export async function menuApi() {
   if (!MENU_API_URL) {
-    return localMenu;
+    throw new Error("API URL not configured for menu data");
   }
 
-  try {
-    const response = await fetch(MENU_API_URL);
-    if (!response.ok) {
-      throw new Error("failed to fetch menu");
-    }
-    return await response.json();
-  } catch {
-    return localMenu;
+  const response = await fetch(MENU_API_URL);
+  if (!response.ok) {
+    throw new Error("failed to fetch menu");
   }
+
+  return await response.json();
 }
 
 export async function addMenuItem({
