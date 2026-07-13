@@ -5,7 +5,13 @@ import ErrorModal from "../components/ErrorModal";
 import { addMenuItem, editMenuItem } from "../api/menuApi";
 import { useMenu } from "../context/MenuContext";
 
-const emptyForm = { image: "", name: "", category: "", description: "", price: "" };
+const emptyForm = {
+  image: "",
+  name: "",
+  category: "",
+  description: "",
+  price: "",
+};
 
 export default function Admin() {
   const [insertVisible, setInsertVisible] = useState(false);
@@ -62,7 +68,10 @@ export default function Admin() {
     };
 
     // Optimistically show the change right away.
-    const optimisticItem = { id: editingId || `temp-${Date.now()}`, ...payload };
+    const optimisticItem = {
+      id: editingId || `temp-${Date.now()}`,
+      ...payload,
+    };
     const snapshot = applyItemUpsert(optimisticItem);
 
     setInsertVisible(false);
@@ -79,7 +88,9 @@ export default function Admin() {
       applyItemUpsert(saved);
     } catch (err) {
       rollbackMenu(snapshot);
-      setSaveErrorMessage(err.message || "Unable to save item. Please try again.");
+      setSaveErrorMessage(
+        err.message || "Unable to save item. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -94,20 +105,35 @@ export default function Admin() {
     <>
       <Header />
       <AdminMenuList onEditRequest={openEditForm} />
-      <button onClick={openAddForm} className="add-item" type="button" aria-label="Add menu item">
+      <button
+        onClick={openAddForm}
+        className="add-item"
+        type="button"
+        aria-label="Add menu item"
+      >
         +
       </button>
 
       {insertVisible && (
         <>
           <div className="glass" onClick={() => setInsertVisible(false)}></div>
-          <div className="display add-item-modal" role="dialog" aria-modal="true">
+          <div
+            className="display add-item-modal"
+            role="dialog"
+            aria-modal="true"
+          >
             <form className="add-item-form" onSubmit={handleSubmit}>
-              <h3 className="display-name">{editingId ? "Edit menu item" : "Add menu item"}</h3>
+              <h3 className="display-name">
+                {editingId ? "Edit menu item" : "Add menu item"}
+              </h3>
               <label htmlFor="image-link">Image Link Address:</label>
               <input
                 id="image-link"
-                type="url"
+                type="text"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
                 placeholder="Image Link"
                 className="admin-input"
                 value={form.image}
@@ -163,10 +189,23 @@ export default function Admin() {
               />
               {error ? <p className="admin-error-text">{error}</p> : null}
               <div className="form-action">
-                <button className="toggle-button admin-submit-btn" type="submit" disabled={submitting}>
-                  {submitting ? "Saving..." : editingId ? "Save changes" : "Submit"}
+                <button
+                  className="toggle-button admin-submit-btn"
+                  type="submit"
+                  disabled={submitting}
+                >
+                  {submitting
+                    ? "Saving..."
+                    : editingId
+                      ? "Save changes"
+                      : "Submit"}
                 </button>
-                <button onClick={() => setInsertVisible(false)} type="button" className="cancel" aria-label="Close form">
+                <button
+                  onClick={() => setInsertVisible(false)}
+                  type="button"
+                  className="cancel"
+                  aria-label="Close form"
+                >
                   Cancel
                 </button>
               </div>
@@ -175,7 +214,9 @@ export default function Admin() {
         </>
       )}
 
-      {saveErrorMessage && <ErrorModal message={saveErrorMessage} onOk={handleErrorOk} />}
+      {saveErrorMessage && (
+        <ErrorModal message={saveErrorMessage} onOk={handleErrorOk} />
+      )}
     </>
   );
 }
