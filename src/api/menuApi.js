@@ -1,4 +1,10 @@
 import { MENU_API_URL, MENU_ITEMS_API_URL } from "../config/api";
+import { getToken } from "../auth/tokenStore";
+
+function authHeaders() {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 export async function menuApi() {
   if (!MENU_API_URL) {
@@ -22,19 +28,15 @@ export async function addMenuItem({
 }) {
   const response = await fetch(MENU_ITEMS_API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeaders() },
     credentials: "include",
     body: JSON.stringify({ category, name, price, description, image }),
   });
-  const rawText = await response.text();
-  alert("status=" + response.status + " body=" + rawText); // TEMP DEBUG
 
   const data = await response.json().catch(() => ({}));
-
   if (!response.ok) {
     throw new Error(data.error || "Failed to add item.");
   }
-
   return data.item;
 }
 
@@ -46,18 +48,16 @@ export async function editMenuItem(
     `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}`,
     {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       credentials: "include",
       body: JSON.stringify({ category, name, price, description, image }),
     },
   );
 
   const data = await response.json().catch(() => ({}));
-
   if (!response.ok) {
     throw new Error(data.error || "Failed to update item.");
   }
-
   return data.item;
 }
 
@@ -66,16 +66,15 @@ export async function deleteMenuItem(id) {
     `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}`,
     {
       method: "DELETE",
+      headers: { ...authHeaders() },
       credentials: "include",
     },
   );
 
   const data = await response.json().catch(() => ({}));
-
   if (!response.ok) {
     throw new Error(data.error || "Failed to delete item.");
   }
-
   return data;
 }
 
@@ -84,17 +83,15 @@ export async function setItemVisibility(id, isVisible) {
     `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}/visibility`,
     {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       credentials: "include",
       body: JSON.stringify({ isVisible }),
     },
   );
 
   const data = await response.json().catch(() => ({}));
-
   if (!response.ok) {
     throw new Error(data.error || "Failed to update visibility.");
   }
-
   return data.item;
 }

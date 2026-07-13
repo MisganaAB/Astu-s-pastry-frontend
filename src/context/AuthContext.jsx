@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { API_URL } from "../config/api";
+import { setToken, getToken, clearToken } from "../auth/tokenStore";
 
 const AuthContext = createContext(null);
 
@@ -10,36 +11,27 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const check = async () => {
-      const storedAuth = localStorage.getItem("qrmenu-auth");
-      if (storedAuth) {
-        try {
-          const parsedAuth = JSON.parse(storedAuth);
-          // attempt to verify token with backend
-          // with httpOnly cookies we don't need to send token manually; include credentials
-          try {
-            const res = await fetch(`${API_URL}/api/auth/check`, {
-              credentials: "include",
-            });
-            if (res.ok) {
-              const data = await res.json();
-              setIsAuthenticated(true);
-              setUser(data.user ?? parsedAuth.user ?? null);
-              setLoading(false);
-              return;
-            }
-          } catch {
-            // fall through to clear storage
-          }
-          // token invalid or no token: clear stored auth
-          localStorage.removeItem("qrmenu-auth");
-        } catch {
-          localStorage.removeItem("qrmenu-auth");
+      try {
+        const res = await fetch(`${API_URL}/api/auth/check`, {
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${getToken() || ""}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setIsAuthenticated(true);
+          setUser(data.user ?? null);
+        } else {
+          setIsAuthenticated(false);
+          setUser(null);
         }
+      } catch {
+        setIsAuthenticated(false);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-
-      setIsAuthenticated(false);
-      setUser(null);
-      setLoading(false);
     };
 
     check();
@@ -64,27 +56,23 @@ export const AuthProvider = ({ children }) => {
     }
 
     const authUser = data.user;
-    // token is stored as httpOnly cookie by backend; persist only user info
-    localStorage.setItem("qrmenu-auth", JSON.stringify({ user: authUser }));
+    if (data.token) {
+      setToken(data.token); // in-memory only, never persisted
+    }
     setUser(authUser);
     setIsAuthenticated(true);
     return authUser;
   };
 
   const logout = () => {
-    fetch(`${API_URL}/api/logout`, {
-      method: "POST",
-      credentials: "include",
-    }).catch(() => {});
-    localStorage.removeItem("qrmenu-auth");
+    fetch(`${API_URL}/api/logout`, { method: "POST", credentials: "include" }).catch(() => {});
+    clearToken();
     setUser(null);
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, user, loading, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
