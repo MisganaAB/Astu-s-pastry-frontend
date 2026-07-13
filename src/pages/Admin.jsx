@@ -52,9 +52,8 @@ export default function Admin() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const handleSubmit = async (event) => {
-  event.preventDefault();
-  alert("submit fired, price=" + form.price + " image=" + form.image); // TEMP DEBUG
+
+    alert("submit fired, price=" + form.price + " image=" + form.image); // TEMP DEBUG
     setError("");
 
     if (!form.category) {
