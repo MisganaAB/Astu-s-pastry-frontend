@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  --neutral: #101522;
+  --secondary-neutral: #293240;
+  --secondary-neutral-hover: #52627d;
+  --title-color: whitesmoke;
+  --tertiary: #d96a67;
+  --primary: #0e9f6e;
+  --headline-font: "Playfair Display", serif;
+  --body-font: "Inter", sans-serif;
+
+  --card-background: #07090f;
+  --tertiary-II: #faa8197d;
+}
+
+body {
+  max-width: 100%;
+  position: relative;
+  min-height: 100vh;
+  /* padding-top: 20px; */
+  padding-bottom: 10px;
+  overflow-y: scroll;
+  /* overflow-x: hidden; */
+  /* display: flex; */
+  flex-direction: column;
+  align-self: center;
+  align-items: center;
+  justify-items: center;
+  /* background: linear-gradient(0deg, #a7ff5f, #ffffff); */
+  background: var(--neutral);
+}
+#root {
+  max-width: 100%;
+  display: flex;
+  position: relative;
+}

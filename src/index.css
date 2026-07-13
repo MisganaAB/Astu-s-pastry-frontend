@@ -1,0 +1,875 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+}
+html {
+  min-height: 100%;
+  height: 100%;
+}
+body,
+#root {
+  min-height: 100vh;
+}
+:root {
+  --neutral: #101522;
+  --secondary-neutral: #293240;
+  --secondary-neutral-hover: #52627d;
+  --title-color: whitesmoke;
+  --tertiary: #d96a67;
+  --primary: #0e9f6e;
+  --headline-font: "Playfair Display", serif;
+  --body-font: "Inter", sans-serif;
+
+  --card-background: #07090f;
+  --tertiary-II: #faa719dd;
+}
+
+.special-img,
+.special-rec .text {
+  transition: opacity 0.25s ease;
+}
+
+.special-img.fading,
+.special-rec .text.fading {
+  opacity: 0;
+}
+
+.special-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+}
+
+.special-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--secondary-neutral);
+  transition: background 0.2s ease;
+}
+
+.special-dot.active {
+  background: var(--primary);
+}
+
+.error-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swipe-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  width: min(100%, 540px);
+  margin: 7px 0 5px 0;
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.swipe-wrapper .food-item {
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  will-change: transform;
+}
+.swipe-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 176px;
+  display: flex;
+  z-index: 1;
+} 
+
+.swipe-edit-btn,
+.swipe-delete-btn {
+  flex: 1;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.swipe-edit-btn {
+  background: var(--primary);
+}
+
+.swipe-delete-btn {
+  background: var(--tertiary);
+  border-radius: 0 20px 20px 0;
+}
+
+.confirm-delete-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cancel-button {
+  background: var(--secondary-neutral);
+  color: var(--title-color);
+}
+
+.confirm-delete-button {
+  background: var(--tertiary);
+  color: white;
+}
+
+/* admin form input*/
+.add-item-modal {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.add-item-form label {
+  font-weight: bold;
+}
+.add-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--secondary-neutral);
+  background: var(--neutral);
+  color: var(--title-color);
+  font-family: var(--body-font);
+  font-size: 0.95rem;
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.admin-error-text {
+  color: var(--tertiary);
+  font-size: 0.9rem;
+}
+
+.admin-submit-btn {
+  width: 100%;
+  margin-top: 4px;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+body {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 10px;
+  overflow-y: scroll;
+  flex-direction: column;
+  align-self: center;
+  align-items: center;
+  justify-items: center;
+  background: var(--neutral);
+  color: var(--title-color);
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+.add-item {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 4rem;
+  height: 4rem;
+  z-index: 1000;
+  border-radius: 50%;
+  font-size: larger;
+  color: whitesmoke;
+  background-color: var(--primary);
+  border: none;
+  box-shadow: 0px 2px 15px 4px;
+}
+
+body[data-theme="light"] {
+  --neutral: #f5f7fb;
+  --secondary-neutral: #dfe6f0;
+  --secondary-neutral-hover: #c4d2e2;
+  --title-color: #172033;
+  --tertiary: #b44c43;
+  --primary: #0f8a5f;
+  --card-background: #ffffff;
+  --tertiary-II: #f5a623;
+}
+
+.logoContainer {
+  max-width: 70px;
+  max-height: 70px;
+}
+
+header {
+  margin: 15px;
+  display: flex;
+  align-self: start;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 30px);
+  gap: 12px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.theme-toggle,
+.logout-button,
+.toggle-button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.theme-toggle,
+.logout-button {
+  background: var(--secondary-neutral);
+  color: var(--title-color);
+}
+
+.toggle-button {
+  background: var(--primary);
+  color: white;
+  min-width: 64px;
+  height: fit-content;
+  align-self: center;
+}
+
+.admin-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100%, 540px);
+  padding: 0.8rem 1rem;
+  margin: 0.5rem 0;
+  border-radius: 14px;
+  background: var(--card-background);
+  color: var(--title-color);
+}
+header h1 {
+  font-family: var(--headline-font);
+  color: var(--primary);
+}
+.glass {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  z-index: 9998;
+}
+.special-rec {
+  margin: 10px auto;
+  width: min(100%, 520px);
+  position: relative;
+  color: var(--title-color);
+  padding: 0 10px;
+  border-radius: 20px;
+  background-image: linear-gradient(
+    to bottom,
+    var(--secondary-neutral),
+    var(--neutral),
+    var(--neutral),
+    var(--card-background)
+  );
+}
+.categories {
+  padding: 3px 5px;
+  text-align: center;
+  color: var(--title-color);
+  width: fit-content;
+}
+
+.categories p em {
+  padding: 3px 5px;
+  margin: 0 3px;
+  text-align: center;
+  border-radius: 25px;
+  background-color: var(--tertiary-II);
+  color: var(--title-color);
+  width: fit-content;
+}
+
+.namePrice {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin: 10px 0 5px 0;
+}
+
+@media screen and (min-width: 344px) {
+  .special-rec {
+    margin: 10px auto;
+    width: 90%;
+    max-width: 520px;
+    /* position: relative; */
+    color: var(--title-color);
+  }
+  .special-rec h3 {
+    padding: 10px 0 10px;
+    font-family: var(--headline-font);
+  }
+  .special-img-container {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    /* height: 80%; */
+    border-radius: 8px;
+  }
+  .overlay {
+    position: absolute;
+    width: 100%;
+    height: 99%;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    border-radius: 8px;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.753),
+      rgba(255, 255, 255, 0.385)
+    );
+    /* Centering tools for any text you put inside */
+    display: flex;
+    padding: 10px;
+    justify-content: start;
+    align-items: end;
+    color: var(--tertiary);
+
+    /* Smooth animation if you want it to appear on hover */
+    transition: background-color 0.3s ease;
+  }
+  .special-img {
+    width: 100%;
+    height: auto;
+    z-index: 1;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .logoContainer {
+    width: 50%;
+    height: 50%;
+  }
+  .food-img,
+  .display-img,
+  .geae-logo {
+    width: 100%;
+    height: 100%;
+  }
+  .buffe {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: var(--neutral);
+    scrollbar-width: none;
+    align-self: stretch;
+  }
+  .menu-list-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: var(--neutral);
+    padding-top: 0.25rem;
+  }
+  .sections {
+    color: rgb(141, 140, 140);
+    margin: 0 7px 0 7px;
+    text-align: center;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 7px;
+    padding: 10px 20px 10px 20px;
+    font-family: var(--body-font);
+    font-size: 0.9rem;
+    /* border: 1px solid; */
+    border: none;
+    background-color: var(--secondary-neutral);
+  }
+
+  .active {
+    /* background-color: #fec72f6e; */
+    background-color: var(--primary);
+    color: whitesmoke;
+    /* border-color: rgb(254, 152, 0); */
+  }
+
+  /* foodlist */
+
+  .food-list {
+    /* margin-top: 20px; */
+    padding: 10px 18px;
+    /* overflow-y: auto; */
+    /* overflow-x: hidden; */
+    width: 100%;
+    height: fit-content;
+    padding: 0 18px 0 18px;
+    display: flex;
+    /* flex-wrap: wrap; */
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 125px;
+  }
+
+  .food-item {
+    width: min(100%, 540px);
+    height: 110px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    border-radius: 20px;
+    padding: 5px;
+    margin: 7px 0 5px 0;
+    color: var(--title-color);
+    background: linear-gradient(
+      145deg,
+      var(--card-background),
+      color-mix(in srgb, var(--card-background) 80%, var(--secondary-neutral))
+    );
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .food-item:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 16px 30px rgba(0, 0, 0, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+
+  .img-container {
+    width: 110px;
+    height: 110px;
+    content: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background-color: rgb(221, 220, 220);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.392);
+  }
+  .food-details {
+    width: 70%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: space-evenly;
+    padding: 0 5px 0 5px;
+    margin: 0 5px 0 5px;
+  }
+  .food-name {
+    font-size: 1.2rem;
+    font-weight: bolder;
+  }
+  .food-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-family: var(--body-font);
+    overflow: hidden;
+    color: rgb(74, 74, 74);
+    font-size: 12px;
+  }
+  .food-price {
+    font-size: 20px;
+    font-weight: 300;
+    color: rgb(4, 190, 38);
+    width: fit-content;
+    display: flex;
+    flex-wrap: nowrap;
+    font-weight: 700;
+  }
+  .special {
+    background-color: rgb(0, 128, 0);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+
+    position: absolute;
+    top: -15px;
+    right: -8px;
+    align-items: center;
+    justify-content: center;
+    /* color: rgb(255, 149, 0); */
+    color: rgb(255, 221, 0);
+    font-weight: bolder;
+    transform: rotate(-30deg);
+  }
+  .display-name .special span {
+    width: 52px;
+    height: 52px;
+  }
+  .display-name .special {
+    width: 60px;
+    height: 60px;
+    z-index: 5;
+    top: -4px;
+    right: -4px;
+  }
+  /* .special p {
+    z-index: 6;
+  } */
+  .special span {
+    border: 2px solid white;
+    border-radius: 50%;
+    border-style: dashed;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    /* z-index: 5; */
+  }
+
+  /* details */
+  .display {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    /* 2. Dead-center it on the screen */
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 10px 0;
+
+    /* 3. Force it to layer on top of EVERYTHING else */
+    z-index: 9999;
+
+    /* 4. UI Layout Styles */
+    width: 75%; /* Fits beautifully on mobile screens */
+    max-width: 540px;
+
+    max-width: 350px; /* Prevents it from stretching too wide on desktops */
+    height: fit-content;
+    background-color: var(--card-background);
+    border-radius: 25px;
+    padding: 15px 10px;
+    color: var(--title-color);
+    box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.25);
+  }
+  .display-img-container {
+    width: fit-content;
+    height: 300px;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 20px;
+    background-color: rgb(93, 93, 93);
+  }
+  .display-img,
+  .food-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+  }
+  .display-name {
+    font-size: 25px;
+    font-weight: bolder;
+    display: flex;
+  }
+  .name-price {
+    display: flex;
+    justify-content: space-between;
+  }
+  .display-price {
+    font-size: 25px;
+    font-weight: bolder;
+    color: rgb(4, 190, 38);
+  }
+  .display-description {
+    font-family: var(--body-font);
+    font-size: 14px;
+    color: var(--title-color);
+    margin-top: 10px;
+    opacity: 0.92;
+  }
+  .bi-x {
+    position: absolute;
+    z-index: 10001;
+    top: 20px;
+    left: 15px;
+    font-size: 25px;
+    cursor: pointer;
+    color: rgb(255, 23, 23);
+  }
+  .cancel {
+    border-radius: 50px;
+    padding: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    background-color: rgb(246, 33, 33);
+    color: whitesmoke;
+    border: none;
+    width: 100%;
+  }
+}
+
+/* Ensure modal sits above the glass backdrop and is fixed to viewport */
+.display {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin: 0 16px;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  width: min(95vw, 540px);
+  max-width: 540px;
+  /* max-width: 100%; */
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* When modal is open, prevent document scrolling */
+.no-scroll,
+body.no-scroll {
+  overflow: hidden !important;
+  height: 100vh;
+}
+
+/* Responsive containment and polished scaling for all screen sizes */
+.special-img-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: #1b2430;
+}
+.special-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.special-rec h3 {
+  margin-bottom: 10px;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+}
+
+body {
+  max-width: 100%;
+}
+header,
+/* .special-rec, */
+.display {
+  width: 95%;
+}
+.food-list {
+  width: 100%;
+}
+
+/* Make the top buffer bar span the full viewport width */
+.buffe {
+  /* width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  align-self: stretch;
+  margin: 0;
+  box-shadow: 0px 10px 15px rgba(255, 255, 255, 0.204);
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100; */
+  z-index: 1000;
+
+  width: 100%;
+  display: flex;
+  gap: 10px;
+
+  padding: 10px 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: none;
+}
+
+@media (max-width: 520px) {
+  .food-item {
+    /* flex-direction: column; */
+    align-items: stretch;
+    height: auto;
+    width: min(100%, 540px);
+  }
+  .img-container {
+    width: 50%;
+    height: 110px;
+  }
+  .food-details {
+    width: 100%;
+    margin: 10px 0 0;
+  }
+  .display {
+    width: min(95%, 90vw);
+    margin: 0 20px 0;
+    top: 50%;
+    left: 50%;
+  }
+  .display-img-container {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+  .display-name {
+    font-size: 20px;
+  }
+  .display-description {
+    font-size: 16px;
+  }
+  .form-action {
+    display: flex;
+    flex-wrap: nowrap;
+    max-width: inherit;
+  }
+}
+.form-action {
+  gap: 10px;
+  display: flex;
+  max-width: inherit;
+  flex-wrap: wrap;
+}
+
+/* Remove any accidental horizontal overflow on small screens */
+@media (max-width: 550px) {
+  html,
+  body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .special-rec {
+    align-self: center;
+    justify-self: center;
+    width: 98%;
+    padding: 18px;
+  }
+  header,
+  .food-list {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .display {
+    left: 10px;
+    right: 10px;
+    top: 15%;
+    width: auto;
+    max-width: none;
+    transform: none;
+    margin: 0;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .buffe {
+    position: sticky;
+    top: 0;
+    z-index: 1001;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: var(--neutral);
+    scrollbar-width: none;
+    align-items: center;
+  }
+  .menu-list-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: var(--neutral);
+    padding-top: 0.25rem;
+  }
+}
+
+@media (min-width: 550px) {
+  .display-name {
+    font-size: 20px;
+  }
+  .display-description {
+    font-size: 16px;
+  }
+  .food-description,
+  food-details {
+    font-size: 16px;
+  }
+}
+/* Hide scrollbars visually but keep scrolling functional */
+html,
+body {
+  -ms-overflow-style: clip; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.buffe::-webkit-scrollbar,
+.food-list::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/frontend/index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Gaea</title>
+  </head>
+  <body>
+    <section class="display">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="40"
+        height="40"
+        fill="currentColor"
+        class="bi bi-x"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"
+        />
+      </svg>
+      <div class="display-img-container">
+        <img
+          src="images/Strawberry_Mojito_Mocktail_Recipe.webp"
+          alt="food"
+          class="display-img"
+        />
+      </div>
+      <div class="display-details">
+        <br />
+        <div class="name-price">
+          <h3 class="display-name">Avocado Smoothie</h3>
+          <p class="display-price">355 <span>br</span></p>
+        </div>
+        <div class="categories">
+          <p><em>smoothie's</em></p>
+        </div>
+        <br />
+        <h4>Made with:</h4>
+        <p class="display-description">
+          Falafel (Chickpea, cumin, coriander, parsley), zucchini, pico-de gallo
+          (lemon, diced tomatoes, cilantro), guacamole (avocado, lemon, onions),
+          white cabbage, pickled onion, carrots, vegan mayonnaise, tortillas
+        </p>
+      </div>
+    </section>
+    <div class="glass"></div>
+    <header>
+      <div class="logoContainer">
+        <img src="images/geae.webp" alt="geae" class="geae-logo" />
+      </div>
+      <h1>Gaea</h1>
+    </header>
+    <div class="buffe">
+      <button class="sections active">All</button>
+      <button class="sections">BreakFast</button>
+      <button class="sections">Pizza</button>
+      <button class="sections">Sandwich</button>
+      <button class="sections">Sandwich</button>
+      <button class="sections">Mexican</button>
+    </div>
+    <section class="special-rec">
+      <h3>Special Order</h3>
+      <div class="special-img-container">
+        <div class="overlay">
+          <div class="text">
+            <h3>Mojito</h3>
+            <p>Special drinks</p>
+          </div>
+        </div>
+        <img
+          class="special-img"
+          src="./images/Strawberry_Mojito_Mocktail_Recipe.webp"
+          alt="mojito"
+        />
+      </div>
+    </section>
+    <section class="food-list">
+      <div class="food-item">
+        <div class="img-container">
+          <img
+            src="images/Strawberry_Mojito_Mocktail_Recipe.webp"
+            alt="food"
+            class="food-img"
+          />
+        </div>
+        <div class="food-details">
+          <h3 class="food-name">Avocado Smoothie</h3>
+
+          <p class="food-description">
+            Falafel (Chickpea, cumin, coriander, parsley), zucchini, pico-de
+            gallo (lemon, diced tomatoes, cilantro), guacamole (avocado, lemon,
+            onions), white cabbage, pickled onion, carrots, vegan mayonnaise,
+            tortillas
+          </p>
+          <p class="food-price">355 <span>br</span></p>
+        </div>
+        <span class="special"
+          ><span></span>
+          <p>Special</p></span
+        >
+      </div>
+    </section>
+    <script>
+      const x = document.querySelector(".bi-x");
+      const display = document.querySelector(".display");
+      const foodItems = document.querySelectorAll(".food-item");
+      const foodList = document.querySelector(".food-list");
+      const glass = document.querySelector(".glass");
+      function showDisplay() {
+        display.style.display = "flex";
+        glass.style.display = "block";
+        getMenu();
+        document.body.classList.add("no-scroll");
+      }
+
+      function hideDisplay() {
+        display.style.display = "none";
+        glass.style.display = "none";
+        document.body.classList.remove("no-scroll");
+      }
+
+      x.addEventListener("click", hideDisplay);
+      glass.addEventListener("click", hideDisplay);
+      foodItems.forEach((item) => {
+        item.addEventListener("click", () => {
+          showDisplay();
+        });
+      });
+
+      const buffe = document.querySelector(".buffe");
+      buffe.addEventListener("click", (e) => {
+        if (e.target.classList.contains("sections")) {
+          const sections = document.querySelectorAll(".sections");
+          sections.forEach((section) => {
+            section.classList.remove("active");
+          });
+
+          e.target.classList.add("active");
+        }
+      });
+
+      async function getMenu() {
+        try {
+          const API_URL = window.__API_URL__ || "http://localhost:1414";
+          const response = await fetch(`${API_URL}/api/v1/menu`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log(data);
+          return await data;
+        } catch (err) {
+          console.error(`fetch failed: error message (${err.message})`);
+        }
+      }
+      async function renderMenu() {
+        const data = await getMenu();
+
+        data.forEach((el) => {
+          const html = `
+            <div class="food-item">
+          <div class="img-container">
+            <img
+              src="images/Strawberry_Mojito_Mocktail_Recipe.webp"
+              alt="food"
+              class="food-img"
+            />
+          </div>
+          <div class="food-details">
+            <h3 class="food-name">${el.name}</h3>
+
+            <p class="food-description">${el.description}
+            </p>
+            <p class="food-price">${el.price} br<span>br</span></p>
+          </div>${
+            el.isSpecial
+              ? `
+          <span class="special"
+            ><span></span>
+            <p>Special</p></span
+          >`
+              : ""
+          }
+        </div>
+          `;
+          foodList.insertAdjacentHTML("afterbegin", html);
+        });
+      }
+      renderMenu();
+    </script>
+    /html>
+  </body>
+</html>
