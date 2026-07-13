@@ -26,6 +26,8 @@ export async function addMenuItem({
     credentials: "include",
     body: JSON.stringify({ category, name, price, description, image }),
   });
+  const rawText = await response.text();
+  alert("status=" + response.status + " body=" + rawText); // TEMP DEBUG
 
   const data = await response.json().catch(() => ({}));
 
@@ -36,13 +38,19 @@ export async function addMenuItem({
   return data.item;
 }
 
-export async function editMenuItem(id, { category, name, price, description, image }) {
-  const response = await fetch(`${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ category, name, price, description, image }),
-  });
+export async function editMenuItem(
+  id,
+  { category, name, price, description, image },
+) {
+  const response = await fetch(
+    `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ category, name, price, description, image }),
+    },
+  );
 
   const data = await response.json().catch(() => ({}));
 
@@ -72,12 +80,15 @@ export async function deleteMenuItem(id) {
 }
 
 export async function setItemVisibility(id, isVisible) {
-  const response = await fetch(`${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}/visibility`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({ isVisible }),
-  });
+  const response = await fetch(
+    `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}/visibility`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ isVisible }),
+    },
+  );
 
   const data = await response.json().catch(() => ({}));
 
