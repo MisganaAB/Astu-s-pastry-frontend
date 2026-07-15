@@ -20,10 +20,11 @@ export default function Admin() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [saveErrorMessage, setSaveErrorMessage] = useState("");
-  const { refreshMenu } = useMenu();
+  const { refreshMenu, applyItemUpsert, rollbackMenu } = useMenu();
 
   const handleChange = (field) => (event) => {
     let value = event.target.value;
+    // allow mobile locales that use comma as decimal separator
     if (field === "price" && typeof value === "string") {
       value = value.replace(/,/g, ".");
     }
@@ -66,19 +67,27 @@ export default function Admin() {
       image: form.image,
     };
 
-    setSubmitting(true);
-    try {
-      if (editingId) {
-        await editMenuItem(editingId, payload);
-      } else {
-        await addMenuItem(payload);
-      }
+    // Optimistically show the change right away.
+    const optimisticItem = {
+      id: editingId || `temp-${Date.now()}`,
+      ...payload,
+    };
+    const snapshot = applyItemUpsert(optimisticItem);
 
-      await refreshMenu(); // only reflect the change after the server confirms it
-      setInsertVisible(false);
-      setForm(emptyForm);
-      setEditingId(null);
+    setInsertVisible(false);
+    setForm(emptyForm);
+    setEditingId(null);
+    setSubmitting(true);
+
+    try {
+      const saved = editingId
+        ? await editMenuItem(editingId, payload)
+        : await addMenuItem(payload);
+
+      // Replace the optimistic item with the real server-confirmed one (real id, etc.)
+      applyItemUpsert(saved);
     } catch (err) {
+      rollbackMenu(snapshot);
       setSaveErrorMessage(
         err.message || "Unable to save item. Please try again.",
       );
@@ -89,7 +98,7 @@ export default function Admin() {
 
   const handleErrorOk = async () => {
     setSaveErrorMessage("");
-    await refreshMenu();
+    await refreshMenu(); // guarantee state matches the server after a failure
   };
 
   return (

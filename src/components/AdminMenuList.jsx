@@ -8,7 +8,14 @@ import ErrorModal from "./ErrorModal.jsx";
 import { deleteMenuItem } from "../api/menuApi";
 
 export default function AdminMenuList({ onEditRequest }) {
-  const { menu, loading, filName, refreshMenu } = useContext(MenuContext);
+  const {
+    menu,
+    loading,
+    filName,
+    applyItemRemoval,
+    rollbackMenu,
+    refreshMenu,
+  } = useContext(MenuContext);
   const [selectedItem, setSelectedItem] = useState(null);
   const [pendingDelete, setPendingDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -29,12 +36,15 @@ export default function AdminMenuList({ onEditRequest }) {
   const handleConfirmDelete = async () => {
     if (!pendingDelete) return;
 
+    const snapshot = applyItemRemoval(pendingDelete.id); // instant UI removal
+    setPendingDelete(null);
     setIsDeleting(true);
+
     try {
       await deleteMenuItem(pendingDelete.id);
-      await refreshMenu(); // only remove it from the UI once the server confirms
-      setPendingDelete(null);
+      // success: optimistic state already matches reality, nothing more to do
     } catch (err) {
+      rollbackMenu(snapshot);
       setDeleteErrorMessage(
         err.message || "Unable to delete item. Please try again.",
       );

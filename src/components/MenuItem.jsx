@@ -21,7 +21,7 @@ export default function MenuItem({
   onEditRequest,
   onVisibilityError,
 }) {
-  const { refreshMenu } = useMenu();
+  const { applyVisibilityToggle, rollbackMenu } = useMenu();
   const [dragX, setDragX] = useState(0);
   const [isSwiped, setIsSwiped] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -31,11 +31,13 @@ export default function MenuItem({
 
   const handleVisibilityToggle = async (event) => {
     event.stopPropagation();
+    const nextVisible = !isVisible;
+    const snapshot = applyVisibilityToggle(id, nextVisible); // instant UI update
     setTogglingVisibility(true);
     try {
-      await setItemVisibility(id, !isVisible);
-      await refreshMenu(); // UI only updates once the server confirms
+      await setItemVisibility(id, nextVisible);
     } catch (err) {
+      rollbackMenu(snapshot);
       onVisibilityError?.(err.message || "Unable to update visibility.");
     } finally {
       setTogglingVisibility(false);
@@ -97,10 +99,12 @@ export default function MenuItem({
     return () => document.removeEventListener("pointerdown", handleOutsideClick);
   }, [isSwiped]);
 
+  // Customers (non-admin view) never see hidden items at all
   if (!isVisible && !isAdminView) {
     return null;
   }
 
+  // Admin sees a collapsed row for hidden items, with a "Show" button
   if (!isVisible && isAdminView) {
     return (
       <div className="admin-item-card">
