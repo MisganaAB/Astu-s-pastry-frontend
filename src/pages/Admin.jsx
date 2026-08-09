@@ -10,6 +10,7 @@ const emptyForm = {
   name: "",
   category: "",
   description: "",
+  isSpecial: false,
   price: "",
 };
 
@@ -23,7 +24,10 @@ export default function Admin() {
   const { refreshMenu } = useMenu();
 
   const handleChange = (field) => (event) => {
-    let value = event.target.value;
+    let value =
+      event.target.type === "checkbox"
+        ? event.target.checked
+        : event.target.value;
     if (field === "price" && typeof value === "string") {
       value = value.replace(/,/g, ".");
     }
@@ -44,6 +48,7 @@ export default function Admin() {
       name: item.name || "",
       category: item.category || "",
       description: item.description || "",
+      isSpecial: Boolean(item.isSpecial),
       price: String(item.price ?? ""),
     });
     setInsertVisible(true);
@@ -64,6 +69,7 @@ export default function Admin() {
       price: Number(form.price),
       description: form.description,
       image: form.image,
+      isSpecial: Boolean(form.isSpecial),
     };
 
     setSubmitting(true);
@@ -132,15 +138,29 @@ export default function Admin() {
                 required
               />
               <hr />
-              <label htmlFor="admin-input">Name:</label>
-              <input
-                type="text"
-                placeholder="burger..."
-                className="admin-input"
-                value={form.name}
-                onChange={handleChange("name")}
-                required
-              />
+              <div className="name-special">
+                <label className="name-label" htmlFor="admin-input">
+                  Name:
+                  <input
+                    type="text"
+                    placeholder="burger..."
+                    className="admin-input"
+                    value={form.name}
+                    onChange={handleChange("name")}
+                    required
+                  />
+                </label>
+                <label className="special-label" htmlFor="isSpecial-input">
+                  Special:
+                  <input
+                    id="isSpecial-input"
+                    type="checkbox"
+                    className="isSpecial-input"
+                    checked={Boolean(form.isSpecial)}
+                    onChange={handleChange("isSpecial")}
+                  />
+                </label>
+              </div>
               <label htmlFor="category">Category</label>
               <select
                 id="category"

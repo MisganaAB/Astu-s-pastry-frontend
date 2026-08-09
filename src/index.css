@@ -40,7 +40,57 @@ body,
 .special-rec .text.fading {
   opacity: 0;
 }
+.name-special {
+  display: flex;
+  gap: 16px;
+}
+.special-label,
+.name-label {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+.name-label {
+  width: 85%;
+}
+.isSpecial-input[type="checkbox"] {
+  /* Remove default browser styles */
+  appearance: none;
+  -webkit-appearance: none; /* For older Safari versions */
 
+  /* Set your custom dimensions and border */
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--tertiary-II);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+
+  /* 1. Unchecked background color */
+  background-color: var(--neutral);
+
+  /* Layout to center the checkmark */
+  display: inline-grid;
+  place-content: center;
+}
+.isSpecial-input[type="checkbox"]:checked {
+  background-color: var(--primary);
+}
+
+.isSpecial-input[type="checkbox"]:checked::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-color: white; /* Color of the internal square/checkmark */
+
+  /* Quick trick to turn the inner box into a small checkmark shape */
+  clip-path: polygon(14% 44%, 0 65%, 47% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.isSpecial-input {
+  width: 2rem;
+  height: 100%;
+}
 .special-dots {
   display: flex;
   justify-content: center;
@@ -92,7 +142,7 @@ body,
   width: 176px;
   display: flex;
   z-index: 1;
-} 
+}
 
 .swipe-edit-btn,
 .swipe-delete-btn {

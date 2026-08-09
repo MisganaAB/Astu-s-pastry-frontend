@@ -24,13 +24,21 @@ export async function addMenuItem({
   name,
   price,
   description,
+  isSpecial,
   image,
 }) {
   const response = await fetch(MENU_ITEMS_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...authHeaders() },
     credentials: "include",
-    body: JSON.stringify({ category, name, price, description, image }),
+    body: JSON.stringify({
+      category,
+      name,
+      price,
+      description,
+      isSpecial,
+      image,
+    }),
   });
 
   const data = await response.json().catch(() => ({}));
@@ -42,7 +50,7 @@ export async function addMenuItem({
 
 export async function editMenuItem(
   id,
-  { category, name, price, description, image },
+  { category, name, price, description, image, isSpecial },
 ) {
   const response = await fetch(
     `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}`,
@@ -50,7 +58,14 @@ export async function editMenuItem(
       method: "PUT",
       headers: { "Content-Type": "application/json", ...authHeaders() },
       credentials: "include",
-      body: JSON.stringify({ category, name, price, description, image }),
+      body: JSON.stringify({
+        category,
+        name,
+        price,
+        description,
+        image,
+        isSpecial,
+      }),
     },
   );
 
