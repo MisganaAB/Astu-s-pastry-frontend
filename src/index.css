@@ -902,8 +902,8 @@ header,
   /* Even smaller phones: slightly reduce the thumbnail so layout fits */
   @media (max-width: 400px) {
     .img-container {
-      height: 92px;
-      min-width: 60px;
+      height: 110px;
+      min-width: 110px;
     }
   }
   .food-details {
