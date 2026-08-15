@@ -4,7 +4,11 @@ import { menuApi } from "../api/menuApi";
 
 export default function MenuProvider({ children }) {
   const [menu, setMenu] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // Start true: without this, the very first render shows neither a
+  // skeleton nor "loading" text (loading is false and menu is empty), so
+  // there's a blank frame until the useEffect below fires and flips this.
+  // Starting true means MenuList shows skeletons from the first paint.
+  const [loading, setLoading] = useState(true);
   const [filName, setFilName] = useState("All");
 
   const refreshMenu = async () => {

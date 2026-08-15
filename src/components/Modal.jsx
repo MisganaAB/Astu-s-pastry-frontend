@@ -1,4 +1,5 @@
 import strawberry from "../assets/Strawberry_Mojito_Mocktail_Recipe.webp";
+import ProgressiveImage from "./ProgressiveImage";
 
 export default function Modal({
   src = strawberry || "images/geae.webp",
@@ -30,7 +31,7 @@ export default function Modal({
         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
       </svg>
       <div className="display-img-container">
-        <img src={src} alt={name} className="display-img" />
+        <ProgressiveImage image={src} alt={name} className="display-img" />
       </div>
       <div className="display-details">
         <br />

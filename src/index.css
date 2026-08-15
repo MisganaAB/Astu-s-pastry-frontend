@@ -29,6 +29,51 @@ body,
 
   --card-background: #07090f;
   --tertiary-II: #faa719dd;
+  --order-btn-bg-color: #fa1919dd;
+}
+
+.order-btn {
+  background-color: var(--order-btn-bg-color);
+  color: white;
+
+  /* Sticky Positioning */
+  position: sticky;
+  bottom: 10px; /* Changed from 0 to give it a slight gap from the screen edge */
+  z-index: 5;
+
+  /* Dynamic Responsive Width */
+  width: 100%; /* Spans full width of the parent container */
+  max-width: 530px; /* Caps the size so it does not look too large on desktop */
+  box-sizing: border-box; /* Ensures padding does not break the 100% width */
+
+  /* Styling & Typography */
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.contact-info {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+.contact-info a {
+  /* background-color: var(--tertiary-II); */
+  border: 1px solid var(--tertiary-II);
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 0;
+  border-radius: 20px;
+  font-size: 20px;
+  color: var(--order-btn-bg-color);
+  font-weight: 700;
 }
 
 .special-img,
@@ -373,6 +418,7 @@ header h1 {
   padding: 3px 5px;
   margin: 0 3px;
   text-align: center;
+  text-wrap: nowrap;
   border-radius: 25px;
   background-color: var(--tertiary-II);
   color: var(--title-color);
@@ -474,6 +520,7 @@ header h1 {
     text-align: center;
     width: fit-content;
     height: fit-content;
+    text-wrap: nowrap;
     border-radius: 7px;
     padding: 10px 20px 10px 20px;
     font-family: var(--body-font);
@@ -590,8 +637,8 @@ header h1 {
     display: flex;
 
     position: absolute;
-    top: -15px;
-    right: -8px;
+    top: -6px;
+    right: -6px;
     align-items: center;
     justify-content: center;
     /* color: rgb(255, 149, 0); */
@@ -607,8 +654,8 @@ header h1 {
     width: 60px;
     height: 60px;
     z-index: 5;
-    top: -4px;
-    right: -4px;
+    top: 300px;
+    right: 1px;
   }
   /* .special p {
     z-index: 6;

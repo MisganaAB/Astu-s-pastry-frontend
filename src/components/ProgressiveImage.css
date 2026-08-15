@@ -1,0 +1,125 @@
+/* ----- Skeleton shimmer (used by both the list skeleton and the image
+   placeholder while nothing has loaded yet) ----- */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--secondary-neutral);
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.14),
+    transparent
+  );
+  animation: skeleton-shimmer-sweep 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer-sweep {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after {
+    animation: none;
+  }
+}
+
+/* ----- Skeleton card (mirrors .food-item / .img-container / .food-details) ----- */
+.food-item.skeleton-item {
+  pointer-events: none;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  margin: 8px 0;
+}
+
+.skeleton-line--title {
+  width: 55%;
+  height: 16px;
+}
+
+.skeleton-line--tag {
+  width: 35%;
+  height: 20px;
+  border-radius: 20px;
+}
+
+.skeleton-line--desc {
+  width: 90%;
+}
+
+.skeleton-line--desc-short {
+  width: 65%;
+}
+
+.skeleton-line--special-title {
+  width: 40%;
+  height: 20px;
+  margin: 10px 0;
+}
+
+/* ----- Progressive image (low -> medium -> high crossfade) ----- */
+.progressive-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.progressive-image__skeleton {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.progressive-image__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.progressive-image__layer.is-visible {
+  opacity: 1;
+}
+
+.progressive-image__layer--low {
+  /* the 32px-wide placeholder stretched to fill the box - always blurred,
+     it's meant purely as a color/shape preview while medium/high load */
+  filter: blur(14px);
+  transform: scale(1.1); /* hides blurred edge artifacts */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progressive-image__layer {
+    transition: none;
+  }
+}
+
+/* .img-container and .display-img-container need position: relative so the
+   absolutely-positioned layers above size themselves against the box
+   rather than the page. */
+.img-container,
+.display-img-container {
+  position: relative;
+}

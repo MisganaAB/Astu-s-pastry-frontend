@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { MenuContext } from "../context/MenuContext.jsx";
 import { useEffect } from "react";
 export default function Categories({ categories }) {
-  const [category, setCategory] = useState("Breakfast");
+  const [category, setCategory] = useState("Astu's Pastry Selection");
   const { setFilName } = useContext(MenuContext);
   useEffect(() => {
     setFilName(category);

@@ -6,6 +6,31 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// Builds a multipart/form-data payload for create/edit. `image` is expected
+// to be a File object (from an <input type="file"> or drag-drop) when the
+// user is uploading a new picture, or omitted/undefined when editing
+// without changing the image. Do NOT set Content-Type manually when sending
+// FormData - the browser sets the multipart boundary for you.
+function buildMenuItemFormData({
+  category,
+  name,
+  price,
+  description,
+  isSpecial,
+  image,
+}) {
+  const formData = new FormData();
+  formData.append("category", category);
+  formData.append("name", name);
+  formData.append("price", price);
+  formData.append("description", description ?? "");
+  formData.append("isSpecial", String(!!isSpecial));
+  if (image instanceof File) {
+    formData.append("image", image);
+  }
+  return formData;
+}
+
 export async function menuApi() {
   if (!MENU_API_URL) {
     throw new Error("API URL not configured for menu data");
@@ -19,6 +44,8 @@ export async function menuApi() {
   return await response.json();
 }
 
+// `image` must be a File (e.g. from an <input type="file"> onChange event
+// or a drop handler) - it is required for create.
 export async function addMenuItem({
   category,
   name,
@@ -27,11 +54,15 @@ export async function addMenuItem({
   isSpecial,
   image,
 }) {
+  if (!(image instanceof File)) {
+    throw new Error("An image file is required to add a menu item.");
+  }
+
   const response = await fetch(MENU_ITEMS_API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
+    headers: { ...authHeaders() }, // no Content-Type - browser sets multipart boundary
     credentials: "include",
-    body: JSON.stringify({
+    body: buildMenuItemFormData({
       category,
       name,
       price,
@@ -48,6 +79,9 @@ export async function addMenuItem({
   return data.item;
 }
 
+// `image` is optional here - pass a File only if the user picked a new
+// picture; omit it (or pass undefined/null) to keep the item's existing
+// image untouched.
 export async function editMenuItem(
   id,
   { category, name, price, description, image, isSpecial },
@@ -56,15 +90,15 @@ export async function editMenuItem(
     `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}`,
     {
       method: "PUT",
-      headers: { "Content-Type": "application/json", ...authHeaders() },
+      headers: { ...authHeaders() }, // no Content-Type - browser sets multipart boundary
       credentials: "include",
-      body: JSON.stringify({
+      body: buildMenuItemFormData({
         category,
         name,
         price,
         description,
-        image,
         isSpecial,
+        image,
       }),
     },
   );

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useMenu } from "../context/MenuContext";
 import { setItemVisibility } from "../api/menuApi";
+import ProgressiveImage from "./ProgressiveImage";
 
 const MAX_SWIPE = -176;
 const SWIPE_OPEN_THRESHOLD = 64;
@@ -10,7 +11,7 @@ export default function MenuItem({
   src = "images/Strawberry_Mojito_Mocktail_Recipe.webp",
   name = "Avocado Smoothie",
   desc,
-  price = 355,
+  // price = 355,
   tag,
   categories,
   isSpecial = true,
@@ -49,7 +50,11 @@ export default function MenuItem({
 
   const handlePointerDown = (event) => {
     if (!isAdminView) return;
-    dragStateRef.current = { startX: event.clientX, startOffset: dragX, moved: false };
+    dragStateRef.current = {
+      startX: event.clientX,
+      startOffset: dragX,
+      moved: false,
+    };
     setIsDragging(true);
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -58,7 +63,10 @@ export default function MenuItem({
     if (!isAdminView || !isDragging) return;
     const delta = event.clientX - dragStateRef.current.startX;
     if (Math.abs(delta) > 4) dragStateRef.current.moved = true;
-    const next = Math.min(0, Math.max(MAX_SWIPE, dragStateRef.current.startOffset + delta));
+    const next = Math.min(
+      0,
+      Math.max(MAX_SWIPE, dragStateRef.current.startOffset + delta),
+    );
     setDragX(next);
   };
 
@@ -94,7 +102,8 @@ export default function MenuItem({
       }
     };
     document.addEventListener("pointerdown", handleOutsideClick);
-    return () => document.removeEventListener("pointerdown", handleOutsideClick);
+    return () =>
+      document.removeEventListener("pointerdown", handleOutsideClick);
   }, [isSwiped]);
 
   if (!isVisible && !isAdminView) {
@@ -120,7 +129,10 @@ export default function MenuItem({
   return (
     <div className="swipe-wrapper" ref={wrapperRef}>
       {isAdminView ? (
-        <div className="swipe-actions" onPointerDown={(event) => event.stopPropagation()}>
+        <div
+          className="swipe-actions"
+          onPointerDown={(event) => event.stopPropagation()}
+        >
           <button
             type="button"
             className="swipe-edit-btn"
@@ -161,14 +173,25 @@ export default function MenuItem({
         onPointerCancel={handlePointerUp}
       >
         <div className="img-container">
-          <img src={src} alt={name} className="food-img" />
+          <ProgressiveImage image={src} alt={name} className="food-img" />
+          {/* Anchored to the thumbnail itself (img-container has
+              position: relative) rather than the whole .food-item card -
+              a fixed `right: 420px` offset only worked on very wide
+              layouts and got clipped by .swipe-wrapper's overflow:hidden
+              on narrower cards. */}
+          {isSpecial ? (
+            <span className="special">
+              <span></span>
+              <p>Special</p>
+            </span>
+          ) : null}
         </div>
         <div className="food-details">
           <div className="namePrice">
             <h3 className="food-name">{name}</h3>
-            <p className="food-price">
+            {/* <p className="food-price">
               {price} <span>br</span>
-            </p>
+            </p> */}
           </div>
           <div className="categories">
             <p>
@@ -189,14 +212,6 @@ export default function MenuItem({
             {togglingVisibility ? "..." : "Hide"}
           </button>
         ) : null}
-        {isSpecial ? (
-          <span className="special">
-            <span></span>
-            <p>Special</p>
-          </span>
-        ) : (
-          ""
-        )}
       </div>
     </div>
   );

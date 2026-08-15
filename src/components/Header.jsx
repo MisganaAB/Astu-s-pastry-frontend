@@ -32,10 +32,10 @@ export default function Header() {
 
   return (
     <header>
-      <div className="logoContainer">
+      {/* <div className="logoContainer">
         <img src="/geae.webp" alt="geae" className="geae-logo" />
-      </div>
-      <h1>Gaea</h1>
+      </div> */}
+      <h1>Astu's Pastry</h1>
       <div className="header-actions">
         <button
           className="theme-toggle"
