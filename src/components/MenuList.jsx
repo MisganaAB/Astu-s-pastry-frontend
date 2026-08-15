@@ -4,7 +4,6 @@ import MenuItem from "./MenuItem";
 import MenuItemSkeleton from "./MenuItemSkeleton";
 import { MenuContext } from "../context/MenuContext.jsx";
 import Modal from "./Modal.jsx";
-import NumberList from "./NumberList.jsx";
 import { useDelayedLoading } from "../hooks/useDelayedLoading";
 
 const SKELETON_COUNT = 6;
@@ -19,7 +18,6 @@ export default function MenuList() {
   const showSkeleton = useDelayedLoading(loading, SKELETON_DELAY_MS);
 
   // 1. Add state to track if the NumberList should show
-  const [showNumberList, setShowNumberList] = useState(false);
 
   const categoryNames = useMemo(() => {
     return menu.flatMap((el) => el.name || []);
@@ -39,10 +37,6 @@ export default function MenuList() {
       ? (matchedCategory.items || []).filter((item) => item.isVisible ?? true)
       : [];
   }, [menu, filName]);
-
-  function handleOrderNum() {
-    return filName === "Pastry Boxes";
-  }
 
   // While still loading but under the delay threshold, render nothing here
   // (not the real list, not the skeleton) rather than showing an empty
@@ -73,21 +67,6 @@ export default function MenuList() {
               onClick={() => setSelectedItem(el)}
             />
           ))}
-
-      {/* 2. Change onClick to update the new state variable */}
-      {handleOrderNum() && (
-        <button className="order-btn" onClick={() => setShowNumberList(true)}>
-          Order
-        </button>
-      )}
-
-      {/* 3. Render NumberList based on the state variable */}
-      {showNumberList && (
-        <>
-          <div className="glass" onClick={() => setShowNumberList(false)}></div>
-          <NumberList />
-        </>
-      )}
 
       {selectedItem && (
         <>

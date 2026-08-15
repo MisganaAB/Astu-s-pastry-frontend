@@ -195,7 +195,6 @@ export default function MenuItem({
           </div>
           <div className="categories">
             <p>
-              <em>{categories}</em>
               {tag && tag != categories && <em>{tag}</em>}
             </p>
           </div>

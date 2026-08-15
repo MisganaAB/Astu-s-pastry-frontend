@@ -49,6 +49,7 @@ body,
   /* Styling & Typography */
   border: none;
   border-radius: 8px;
+  margin-bottom: 10px;
   margin-top: 10px;
   padding: 8px 12px;
   font-size: 1rem;
@@ -414,15 +415,27 @@ header h1 {
   width: fit-content;
 }
 
+/* Layout the category/em chips as a wrapping row so each chip moves to
+   the next line when the container becomes too narrow. Keep each chip
+   itself unbroken using `white-space: nowrap`. */
+.categories p {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+}
+
 .categories p em {
-  padding: 3px 5px;
-  margin: 0 3px;
+  padding: 3px 8px;
+  margin: 0;
   text-align: center;
-  text-wrap: nowrap;
+  white-space: nowrap; /* keep chip content on a single line */
   border-radius: 25px;
   background-color: var(--tertiary-II);
   color: var(--title-color);
   width: fit-content;
+  display: inline-block;
 }
 
 .namePrice {
@@ -650,13 +663,7 @@ header h1 {
     width: 52px;
     height: 52px;
   }
-  .display-name .special {
-    width: 60px;
-    height: 60px;
-    z-index: 5;
-    top: 300px;
-    right: 1px;
-  }
+
   /* .special p {
     z-index: 6;
   } */
@@ -701,8 +708,14 @@ header h1 {
     box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.25);
   }
   .display-img-container {
-    width: fit-content;
-    height: 300px;
+    /* Make the modal image container size predictably so the progressive
+       image layers (absolutely positioned) have a containing box. On
+       wide screens this becomes a fixed-ish preview, on small screens it
+       stretches to available width. */
+    width: 48%;
+    max-width: 420px;
+    height: auto;
+    aspect-ratio: 16 / 10;
     align-self: center;
     display: flex;
     align-items: center;
@@ -759,6 +772,23 @@ header h1 {
     width: 100%;
   }
 }
+/* Unconditional sizing so ProgressiveImage's always-on wrapper div
+   (.progressive-image { width:100%; height:100% } in ProgressiveImage.css)
+   never disagrees with .img-container's own sizing at any breakpoint. */
+.img-container {
+  aspect-ratio: 1 / 1 !important;
+  position: relative !important;
+  overflow: hidden;
+}
+.food-img,
+.display-img,
+.geae-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+  display: block;
+}
 
 /* Ensure modal sits above the glass backdrop and is fixed to viewport */
 .display {
@@ -774,6 +804,18 @@ header h1 {
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+  display: flex;
+  gap: 16px;
+}
+.display-details {
+  flex: 1 1 auto;
+}
+.display-name .special {
+  width: 60px;
+  height: 60px;
+  z-index: 5;
+  top: 280px;
+  right: 1px;
 }
 
 /* When modal is open, prevent document scrolling */
@@ -850,18 +892,41 @@ header,
     width: min(100%, 540px);
   }
   .img-container {
-    width: 50%;
+    /* Let aspect-ratio drive the width from the fixed height so the
+       thumbnail remains square and proportional on small screens. */
+    width: auto;
+    min-width: 70px;
     height: 110px;
   }
+  /* Even smaller phones: slightly reduce the thumbnail so layout fits */
+  @media (max-width: 400px) {
+    .img-container {
+      height: 92px;
+      min-width: 60px;
+    }
+  }
   .food-details {
-    width: 100%;
+    /* Use flexible sizing so the details area can shrink to leave room
+       for the admin "Hide" button instead of forcing overflow. */
+    width: auto;
+    flex: 1 1 auto;
     margin: 10px 0 0;
+    min-width: 0; /* allow text to truncate instead of growing container */
+  }
+  /* Ensure the admin toggle button doesn't shrink and sits to the right */
+  .food-item .toggle-button {
+    margin-left: 8px;
+    flex: 0 0 auto;
+    align-self: center;
+    min-width: 48px;
+    padding: 0.45rem 0.6rem;
   }
   .display {
     width: min(95%, 90vw);
     margin: 0 20px 0;
     top: 50%;
     left: 50%;
+    flex-direction: column;
   }
   .display-img-container {
     width: 100%;
@@ -942,6 +1007,13 @@ header,
     width: 100%;
     background: var(--neutral);
     padding-top: 0.25rem;
+  }
+  .display-name .special {
+    width: 60px;
+    height: 60px;
+    z-index: 5;
+    top: 320px;
+    right: 1px;
   }
 }
 

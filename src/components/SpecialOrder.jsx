@@ -3,6 +3,7 @@ import { MenuContext } from "../context/MenuContext.jsx";
 import strawberry from "/images/Strawberry_Mojito_Mocktail_Recipe.webp";
 import ProgressiveImage from "./ProgressiveImage";
 import { useDelayedLoading } from "../hooks/useDelayedLoading";
+import NumberList from "./NumberList.jsx";
 
 const ROTATE_INTERVAL_MS = 5000;
 const RESUME_AFTER_TOUCH_MS = 4000; // how long to stay paused after a touch ends
@@ -12,6 +13,8 @@ const RESUME_AFTER_TOUCH_MS = 4000; // how long to stay paused after a touch end
 const SKELETON_DELAY_MS = 300;
 
 export default function SpecialOrder() {
+  const [showNumberList, setShowNumberList] = useState(false);
+
   const { menu, loading } = useContext(MenuContext);
   const [index, setIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
@@ -134,6 +137,15 @@ export default function SpecialOrder() {
           ))}
         </div>
       ) : null}
+      <button className="order-btn" onClick={() => setShowNumberList(true)}>
+        Order Yours
+      </button>
+      {showNumberList && (
+        <>
+          <div className="glass" onClick={() => setShowNumberList(false)}></div>
+          <NumberList />
+        </>
+      )}
     </section>
   );
 }

@@ -12,6 +12,7 @@ export default function Modal({
   isSpecial,
   // isVisible = false,
 }) {
+
   return (
     <section
       className="display"
@@ -47,9 +48,9 @@ export default function Modal({
               ""
             )}{" "}
           </h3>
-          <p className="display-price">
-            {price} <span>br</span>
-          </p>
+            {/* <p className="display-price">
+              {price} <span>br</span>
+            </p> */}
         </div>
         <div className="categories">
           <p>

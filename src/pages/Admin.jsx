@@ -1,27 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import AdminMenuList from "../components/AdminMenuList";
 import Header from "../components/Header";
 import ErrorModal from "../components/ErrorModal";
 import { addMenuItem, editMenuItem } from "../api/menuApi";
-import { useMenu } from "../context/MenuContext";
+import { MenuContext, useMenu } from "../context/MenuContext";
+import { useContext } from "react";
 
 const emptyForm = {
-  image: "",
+  imageFile: null, // File object, or null if unchanged/not yet picked
+  existingImageUrl: "", // used only for the preview on edit
   name: "",
   category: "",
+  tag: "",
   description: "",
   isSpecial: false,
   price: "",
 };
 
+// Small helper: pick a reasonable preview URL out of whatever shape
+// item.image is in (object {high, medium, low} from the new backend,
+// or a plain string from any legacy items still in the data).
+function getPreviewUrl(image) {
+  if (!image) return "";
+  if (typeof image === "string") return image;
+  return image.medium || image.high || image.low || "";
+}
+
 export default function Admin() {
   const [insertVisible, setInsertVisible] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [previewUrl, setPreviewUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [saveErrorMessage, setSaveErrorMessage] = useState("");
+  const fileInputRef = useRef(null);
   const { refreshMenu } = useMenu();
+  const { menu } = useContext(MenuContext);
+
+  // Revoke any object URL we created for a local file preview once it's
+  // no longer needed, so we don't leak memory.
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleChange = (field) => (event) => {
     let value =
@@ -34,23 +59,42 @@ export default function Admin() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleImageChange = (event) => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    setForm((prev) => ({ ...prev, imageFile: file }));
+
+    if (previewUrl && previewUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
   const openAddForm = () => {
     setEditingId(null);
     setForm(emptyForm);
+    setPreviewUrl("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
     setInsertVisible(true);
   };
 
   const openEditForm = (item) => {
     if (!item) return;
     setEditingId(item.id);
+    const existingUrl = getPreviewUrl(item.image);
     setForm({
-      image: item.image || "",
+      imageFile: null,
+      existingImageUrl: existingUrl,
       name: item.name || "",
       category: item.category || "",
+      tag: item.tag || "",
       description: item.description || "",
       isSpecial: Boolean(item.isSpecial),
       price: String(item.price ?? ""),
     });
+    setPreviewUrl(existingUrl);
+    if (fileInputRef.current) fileInputRef.current.value = "";
     setInsertVisible(true);
   };
 
@@ -63,13 +107,25 @@ export default function Admin() {
       return;
     }
 
+    // A file is required when adding a new item. On edit, it's optional -
+    // omitting it means "keep the existing image" (backend already
+    // handles this: it only re-runs uploadImageVariants if req.file exists).
+    if (!editingId && !form.imageFile) {
+      setError("Please choose an image.");
+      return;
+    }
+
+    // menuApi.js's addMenuItem/editMenuItem build the FormData internally -
+    // they expect a plain object here, with `image` as a File (or
+    // omitted/null on edit to keep the existing image).
     const payload = {
       category: form.category,
       name: form.name,
-      price: Number(form.price),
+      price: form.price,
+      tag: form.tag,
       description: form.description,
-      image: form.image,
       isSpecial: Boolean(form.isSpecial),
+      image: form.imageFile,
     };
 
     setSubmitting(true);
@@ -84,6 +140,7 @@ export default function Admin() {
       setInsertVisible(false);
       setForm(emptyForm);
       setEditingId(null);
+      setPreviewUrl("");
     } catch (err) {
       setSaveErrorMessage(
         err.message || "Unable to save item. Please try again.",
@@ -119,24 +176,44 @@ export default function Admin() {
             role="dialog"
             aria-modal="true"
           >
-            <form className="add-item-form" onSubmit={handleSubmit}>
+            <form
+              className="add-item-form"
+              onSubmit={handleSubmit}
+              encType="multipart/form-data"
+            >
               <h3 className="display-name">
                 {editingId ? "Edit menu item" : "Add menu item"}
               </h3>
-              <label htmlFor="image-link">Image Link Address:</label>
+
+              <label htmlFor="image-file">Image:</label>
+              {previewUrl ? (
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="admin-image-preview"
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                    marginBottom: "8px",
+                  }}
+                />
+              ) : null}
               <input
-                id="image-link"
-                type="text"
-                inputMode="url"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck="false"
-                placeholder="Image Link"
+                id="image-file"
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
                 className="admin-input"
-                value={form.image}
-                onChange={handleChange("image")}
-                required
+                onChange={handleImageChange}
+                required={!editingId}
               />
+              {editingId ? (
+                <p className="admin-hint-text">
+                  Leave empty to keep the current image.
+                </p>
+              ) : null}
               <hr />
               <div className="name-special">
                 <label className="name-label" htmlFor="admin-input">
@@ -170,14 +247,19 @@ export default function Admin() {
                 required
               >
                 <option value="">Category</option>
-                <option value="Breakfast">Breakfast</option>
-                <option value="Pizza">Pizza</option>
-                <option value="Burger">Burger</option>
-                <option value="Mexican">Mexican</option>
-                <option value="Beverage">Beverage</option>
-                <option value="Juice">Juice</option>
-                <option value="Desserts">Desserts</option>
+                {menu.map((el) => (
+                  <option key={el.id} value={`${el.name}`}>{el.name}</option>
+                ))}
               </select>
+              <label htmlFor="tag">Tag</label>
+              <input
+                id="tag"
+                type="text"
+                placeholder="e.g., Non-Fasting"
+                className="admin-input"
+                value={form.tag}
+                onChange={handleChange("tag")}
+              />
               <label htmlFor="price">Price</label>
               <input
                 id="price"

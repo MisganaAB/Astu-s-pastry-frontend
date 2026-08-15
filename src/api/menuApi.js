@@ -18,12 +18,14 @@ function buildMenuItemFormData({
   description,
   isSpecial,
   image,
+  tag,
 }) {
   const formData = new FormData();
   formData.append("category", category);
   formData.append("name", name);
   formData.append("price", price);
   formData.append("description", description ?? "");
+  formData.append("tag", tag ?? "");
   formData.append("isSpecial", String(!!isSpecial));
   if (image instanceof File) {
     formData.append("image", image);
@@ -53,6 +55,7 @@ export async function addMenuItem({
   description,
   isSpecial,
   image,
+  tag,
 }) {
   if (!(image instanceof File)) {
     throw new Error("An image file is required to add a menu item.");
@@ -69,6 +72,7 @@ export async function addMenuItem({
       description,
       isSpecial,
       image,
+      tag,
     }),
   });
 
@@ -84,7 +88,7 @@ export async function addMenuItem({
 // image untouched.
 export async function editMenuItem(
   id,
-  { category, name, price, description, image, isSpecial },
+  { category, name, price, description, image, isSpecial, tag },
 ) {
   const response = await fetch(
     `${MENU_ITEMS_API_URL}/${encodeURIComponent(id)}`,
@@ -99,6 +103,7 @@ export async function editMenuItem(
         description,
         isSpecial,
         image,
+        tag,
       }),
     },
   );
