@@ -713,10 +713,10 @@ header h1 {
        image layers (absolutely positioned) have a containing box. On
        wide screens this becomes a fixed-ish preview, on small screens it
        stretches to available width. */
-    width: 48%;
+    width: 78%;
     max-width: 420px;
     height: auto;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 10 / 10;
     align-self: center;
     display: flex;
     align-items: center;
