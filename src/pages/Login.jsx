@@ -49,9 +49,6 @@ export default function Login() {
         <h2 style={{ marginBottom: "0.5rem", fontSize: "1.5rem" }}>
           Admin Login
         </h2>
-        <p style={{ marginBottom: "1.25rem", color: "#c7d2fe" }}>
-          Use admin / admin123 to continue.
-        </p>
 
         {error ? (
           <p style={{ marginBottom: "1rem", color: "#fda4af" }}>{error}</p>
